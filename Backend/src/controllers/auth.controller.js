@@ -1,8 +1,14 @@
 const userModel = require('../models/user.model.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const redisClient = require('../config/redis.js');
+const redis = require('../config/cache.js');
 
+/**
+ * @desc Register a new user
+ * @route POST /api/auth/register
+ * @access Public
+ * @payload { username, email, password }   -->   "user": { "username", "email", "password", "_id", "__v": 0 }
+ */
 async function register(req, res) {
     const { username, email, password } = req.body;
     const isUserExists = await userModel.findOne({
@@ -38,6 +44,12 @@ async function register(req, res) {
     });
 }
 
+/**
+ * @desc Login a user
+ * @route POST /api/auth/login
+ * @access Public
+ * @payload { email, username, password }   -->   "user": { "username", "email", "password", "_id", "__v": 0 }
+ */
 async function login(req, res) {
     const { username, email, password } = req.body;
 
@@ -55,7 +67,7 @@ async function login(req, res) {
         res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const blackListedToken = await redisClient.get(`blaclist:${req.cookies.token}`);
+    const blackListedToken = await redis.get(`blaclist:${req.cookies.token}`);
 
     if (blackListedToken) {
         res.status(401).json({ message: "Unauthorized (Token is blacklisted)" });
@@ -78,6 +90,12 @@ async function login(req, res) {
     });
 }
 
+/** 
+ * @desc Get user profile
+ * @route GET /api/auth/profile
+ * @access Private
+ * @payload { username, email, password }   -->   "user": { "username", "email", "_id", "__v": 0 }
+*/
 async function profile(req, res) {
     const user = await userModel.findById(req.user.id);
 
@@ -87,6 +105,11 @@ async function profile(req, res) {
     });
 }
 
+/**
+ * @desc Logout user
+ * @route POST /api/auth/logout
+ * @access Private
+ */
 async function logout(req, res) {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
@@ -94,7 +117,7 @@ async function logout(req, res) {
         return res.status(400).json({ message: "Token not provided" });
     }
 
-    await redisClient.set(`blacklist:${token}`, "ture", "EX", 24 * 60 * 60);
+    await redis.set(`blacklist:${token}`, 'blacklisted', "EX", 24 * 60 * 60);
 
     res.clearCookie('token');
 
