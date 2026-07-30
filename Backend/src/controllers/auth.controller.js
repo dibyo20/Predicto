@@ -117,9 +117,9 @@ async function logout(req, res) {
         return res.status(400).json({ message: "Token not provided" });
     }
 
-    await redis.set(`blacklist:${token}`, 'blacklisted', "EX", 24 * 60 * 60);
-
     res.clearCookie('token');
+
+    await redis.set(`blacklist:${token}`, 'blacklisted', "EX", 24 * 60 * 60);
 
     res.status(200).json({
         message: "Logout Successfull",
