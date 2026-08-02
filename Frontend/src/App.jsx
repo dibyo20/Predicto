@@ -1,11 +1,13 @@
-import EmotionDetector from "./Features/pages/EmotionDetectorPage.jsx";
+import { AuthProvider } from "./Features/Auth/auth.context.js";
+import { router } from "./app.routes.jsx";
+import { RouterProvider } from "react-router-dom";
+import "./styles/main.scss";
 
 function App() {
   return (
-    <>
-      <h1>Hi, welcome to my react App</h1>
-      <EmotionDetector />
-    </>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }
 
