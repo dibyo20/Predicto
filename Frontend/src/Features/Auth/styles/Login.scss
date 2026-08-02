@@ -1,0 +1,78 @@
+@import "../../../styles/main.scss";
+
+/* Login-specific styles */
+.auth-page--login {
+  .auth-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    &__center-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      max-width: 420px;
+    }
+
+    .large-logo-icon {
+      color: $color-accent;
+      filter: drop-shadow(0 0 20px rgba($color-accent, 0.3));
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: float 4s ease-in-out infinite;
+
+      svg {
+        fill: currentColor;
+      }
+    }
+
+    &__logo-name {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: $color-text-primary;
+      margin-top: 0.5rem;
+    }
+
+    &__tagline {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: $color-text-secondary;
+      margin-top: 0.5rem;
+    }
+  }
+
+  .auth-card {
+    background-color: rgba($color-card-bg, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+
+    @media (max-width: 480px) {
+      padding: 1.75rem 1.25rem;
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+  }
+}
+
+/* Float animation for the musical note */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
