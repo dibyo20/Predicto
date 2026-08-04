@@ -1,4 +1,4 @@
-const express = require('express').Router();
+const router = require('express').Router();
 const upload = require('../middlewares/upload.middleware.js');
 const songController = require('../controllers/song.controller.js');
 const { verifyToken } = require('../middlewares/auth.middleware.js');

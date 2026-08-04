@@ -17,6 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRouter);
-app.use('/api', uploadRouter);
+app.use('/api/songs', uploadRouter);
 
 module.exports = app;
