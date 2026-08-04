@@ -122,7 +122,7 @@ const Register = () => {
       const { username, email, password } = registerCredentials;
       const res = await handleRegister({ username, email, password });
       if (res) {
-        navigate("/");
+        navigate("/predict");
       } else {
         setError("Unable to create account. Please check your inputs.");
       }
@@ -277,6 +277,20 @@ const Register = () => {
                   autoComplete="new-password"
                 />
 
+                {/* Agreement Checkbox */}
+                <div className="auth-agreement-field">
+                  <label className="checkbox-container" style={{ display: "flex", alignItems: "center", cursor: "pointer", gap: "0.75rem", fontSize: "0.85rem", color: "#9ca3af", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+                    <input
+                      type="checkbox"
+                      id="reg-agree"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                      style={{ cursor: "pointer", width: "16px", height: "16px", accentColor: "#a78bfa" }}
+                      required
+                    />
+                    <span>I agree to the Terms of Service and Privacy Policy</span>
+                  </label>
+                </div>
 
                 {/* Alert handler */}
                 {error && (

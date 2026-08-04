@@ -18,6 +18,7 @@ export function useAuth() {
             return data;
         } catch (error) {
             console.error(error);
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -31,6 +32,7 @@ export function useAuth() {
             return data;
         } catch (error) {
             console.error(error);
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -43,6 +45,7 @@ export function useAuth() {
             setUser(null);
         } catch (error) {
             console.error(error);
+            throw error;
         } finally {
             setLoading(false);
         }

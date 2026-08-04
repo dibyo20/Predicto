@@ -81,7 +81,7 @@ const Login = () => {
     try {
       const res = await handleLogin(loginCredentials);
       if (res) {
-        navigate("/");
+        navigate("/predict");
       } else {
         setError("Invalid username or password.");
       }
