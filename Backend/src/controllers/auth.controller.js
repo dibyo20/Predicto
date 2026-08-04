@@ -10,38 +10,43 @@ const redis = require('../config/cache.js');
  * @payload { username, email, password }   -->   "user": { "username", "email", "password", "_id", "__v": 0 }
  */
 async function register(req, res) {
-    const { username, email, password } = req.body;
-    const isUserExists = await userModel.findOne({
-        $or: [{ username: username }, { email: email }],
-    });
+    try {
+        const { username, email, password } = req.body;
+        const isUserExists = await userModel.findOne({
+            $or: [{ username: username }, { email: email }],
+        });
 
-    if (isUserExists) {
-        res.status(409).json({ message: "User already exists" });
+        if (isUserExists) {
+            return res.status(409).json({ message: "User already exists" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await userModel.create({
+            username,
+            email,
+            password: hashedPassword,
+        });
+
+        const token = jwt.sign(
+            { id: user._id, username: user.username },
+            process.env.JWT_SECRET, {
+            expiresIn: "1h",
+        });
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        });
+
+        return res.status(201).json({
+            message: "User registered successfully",
+            user
+        });
+    } catch (error) {
+        console.error("Register error:", error);
+        return res.status(500).json({ message: error.message || "Internal server error during registration" });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await userModel.create({
-        username,
-        email,
-        password: hashedPassword,
-    });
-
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET, {
-        expiresIn: "1h",
-    });
-
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-    });
-
-    res.status(201).json({
-        message: "User registered successfully",
-        user
-    });
 }
 
 /**
@@ -51,43 +56,51 @@ async function register(req, res) {
  * @payload { email, username, password }   -->   "user": { "username", "email", "password", "_id", "__v": 0 }
  */
 async function login(req, res) {
-    const { username, email, password } = req.body;
+    try {
+        const { username, email, password } = req.body;
 
-    const user = await userModel.findOne({
-        $or: [{ username: username }, { email: email }],
-    }).select("+password");
+        const user = await userModel.findOne({
+            $or: [{ username: username }, { email: email }],
+        }).select("+password");
 
-    if (!user) {
-        res.status(401).json({ message: "Invalid credentials" });
+        if (!user) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        const tokenCookie = req.cookies?.token;
+        if (tokenCookie) {
+            const blackListedToken = await redis.get(`blacklist:${tokenCookie}`);
+
+            if (blackListedToken) {
+                return res.status(401).json({ message: "Unauthorized (Token is blacklisted)" });
+            }
+        }
+
+        const token = jwt.sign(
+            { id: user._id, username: user.username },
+            process.env.JWT_SECRET, {
+            expiresIn: "1h",
+        });
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        });
+
+        return res.status(200).json({
+            message: "User logged in successfully",
+            user
+        });
+    } catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).json({ message: error.message || "Internal server error during login" });
     }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-        res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    const blackListedToken = await redis.get(`blaclist:${req.cookies.token}`);
-
-    if (blackListedToken) {
-        res.status(401).json({ message: "Unauthorized (Token is blacklisted)" });
-    }
-
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET, {
-        expiresIn: "1h",
-    });
-
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-    });
-
-    res.status(200).json({
-        message: "User logged in successfully",
-        user
-    });
 }
 
 /** 
