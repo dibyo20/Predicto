@@ -4,6 +4,7 @@ import Register from "./Features/Auth/pages/Register.jsx";
 import Login from "./Features/Auth/pages/Login.jsx";
 import Home from "./Features/Home/pages/Home.jsx";
 import EmotionDetector from "./Features/Expression/pages/EmotionDetectorPage.jsx";
+import Protected from "./Features/Auth/components/Protected.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +21,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/predict",
-    element: <EmotionDetector />,
+    element: <Protected><EmotionDetector /></Protected>,
   },
   {
     path: "*",
