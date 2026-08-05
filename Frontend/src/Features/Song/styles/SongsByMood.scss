@@ -1,4 +1,3 @@
-/* Songs By Mood Styles */
 $color-bg: #09070f;
 $color-card-bg: #13101c;
 $color-text-primary: #ffffff;
@@ -16,9 +15,9 @@ $color-border: rgba(255, 255, 255, 0.08);
   color: $color-text-primary;
   position: relative;
   overflow-x: hidden;
-  padding-bottom: 120px; /* Space for player bar */
+  padding-bottom: 120px; 
 
-  /* Background Visual Effects */
+  
   &__bg {
     position: absolute;
     top: 0;
@@ -76,7 +75,7 @@ $color-border: rgba(255, 255, 255, 0.08);
   }
 }
 
-/* Banner Card */
+
 .mood-banner {
   background: rgba($color-card-bg, 0.45);
   border: 1px solid $color-border;
@@ -159,7 +158,7 @@ $color-border: rgba(255, 255, 255, 0.08);
   }
 }
 
-/* Songs Grid */
+
 .songs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -201,7 +200,7 @@ $color-border: rgba(255, 255, 255, 0.08);
   &__cover-wrapper {
     position: relative;
     width: 100%;
-    padding-bottom: 100%; /* square ratio */
+    padding-bottom: 100%; 
     border-radius: 12px;
     overflow: hidden;
     background: #0f0d1a;
@@ -314,7 +313,7 @@ $color-border: rgba(255, 255, 255, 0.08);
   }
 }
 
-/* Equalizer Bars */
+
 .equalizer {
   display: flex;
   align-items: flex-end;
@@ -347,7 +346,7 @@ $color-border: rgba(255, 255, 255, 0.08);
   }
 }
 
-/* Audio Player Bar */
+
 .audio-player-bar {
   position: fixed;
   bottom: 0;
@@ -369,7 +368,7 @@ $color-border: rgba(255, 255, 255, 0.08);
     padding: 1.5rem;
   }
 
-  /* Left Side: Song info */
+  
   &__left {
     display: flex;
     align-items: center;
@@ -409,7 +408,7 @@ $color-border: rgba(255, 255, 255, 0.08);
     max-width: 180px;
   }
 
-  /* Middle Side: Playback Control slider */
+  
   &__middle {
     display: flex;
     flex-direction: column;
@@ -511,7 +510,7 @@ $color-border: rgba(255, 255, 255, 0.08);
     }
   }
 
-  /* Right Side: Volume */
+  
   &__right {
     display: flex;
     align-items: center;

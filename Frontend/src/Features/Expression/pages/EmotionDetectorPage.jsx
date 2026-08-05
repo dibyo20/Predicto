@@ -197,6 +197,9 @@ export default function EmotionDetector() {
     };
   }, []);
 
+  /**
+   * Toggles the live facial analysis detection loop.
+   */
   const handleToggleDetection = () => {
     if (isDetecting) {
       isDetectingRef.current = false;
@@ -211,13 +214,20 @@ export default function EmotionDetector() {
     }
   };
 
-  // Trigger Song Playlist Suggestions
+  /**
+   * Navigates to the SongsByMood route using the parsed emotion query parameter.
+   */
   const handleShowMusic = () => {
     if (emotion === "Waiting for detection" || isDetecting) return;
     const moodQuery = getMoodQueryKeyword(title);
     navigate(`/songsbymood?mood=${moodQuery}`, { state: { mood: title } });
   };
 
+  /**
+   * Resolves raw title text into standardized mood query keywords for playlist queries.
+   * @param {string} titleText - The friendly mood title.
+   * @returns {string} The query string param representation.
+   */
   const getMoodQueryKeyword = (titleText) => {
     const t = titleText.toLowerCase();
     if (t.includes("very happy")) return "very happy";
@@ -228,7 +238,11 @@ export default function EmotionDetector() {
     return "happy";
   };
 
-  // Parsing current emotion string for rendering details
+  /**
+   * Parses the active model classification string into icons, titles and detailed subtexts.
+   * @param {string} emo - The raw classification returned from the detector loop.
+   * @returns {Object} Extracted rendering assets { emoji, title, subtitle }.
+   */
   const parseEmotion = (emo) => {
     if (emo === "Waiting for detection") {
       return {

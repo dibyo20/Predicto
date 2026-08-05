@@ -4,7 +4,6 @@ import { useSong } from "../hooks/useSong";
 import { useAuth } from "../../Auth/hooks/useAuth";
 import "../styles/SongsByMood.scss";
 
-// SVG Icons
 const FaceScannerLogo = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4" strokeLinecap="round" strokeLinejoin="round" />
@@ -82,7 +81,6 @@ export default function SongsByMood() {
 
   const { song, handlleGetSongs, loading } = useSong();
 
-  // Audio refs & states
   const audioRef = useRef(new Audio());
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -91,7 +89,11 @@ export default function SongsByMood() {
   const [volume, setVolume] = useState(0.8);
   const [isMuted, setIsMuted] = useState(false);
 
-  // Map backend mood string to friendly UI display
+  /**
+   * Formats the raw backend mood string to a descriptive, user-friendly UI title.
+   * @param {string} text - The raw mood descriptor string.
+   * @returns {string} The formatted mood title.
+   */
   const getFriendlyMoodTitle = (text) => {
     const t = text.toLowerCase();
     if (t.includes("very happy")) return "Very Happy Mood Detected";
@@ -101,6 +103,11 @@ export default function SongsByMood() {
     return "Neutral Mood Detected";
   };
 
+  /**
+   * Selects an appropriate emoji representing the detected emotional state.
+   * @param {string} text - The raw mood descriptor.
+   * @returns {string} An emoji string.
+   */
   const getMoodEmoji = (text) => {
     const t = text.toLowerCase();
     if (t.includes("happy")) return "😊";
@@ -109,6 +116,12 @@ export default function SongsByMood() {
     return "😐";
   };
 
+  /**
+   * Resolves the duration of fallback/mock tracks based on their file identifiers.
+   * Calculates a deterministic layout helper duration for other tracks.
+   * @param {Object} songItem - The song metadata object.
+   * @returns {string} The formatted duration string (m:ss).
+   */
   const getSongDurationText = (songItem) => {
     const url = songItem.songUrl || "";
     if (url.includes("Song-1.mp3")) return "2:40";
@@ -120,13 +133,18 @@ export default function SongsByMood() {
     if (url.includes("Song-7.mp3")) return "3:22";
     if (url.includes("Song-8.mp3")) return "2:58";
     if (url.includes("Song-9.mp3")) return "3:40";
+
     const length = (songItem.title || "Song").length;
     const mins = 2 + (length % 3);
     const secs = (length * 7) % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Setup mock playlist fallbacks if database returns no items
+  /**
+   * Fallback mock songs to ensure standard operations continue if backend query returns empty.
+   * @param {string} mood - The current search parameter mood keyword.
+   * @returns {Array<Object>} Fallback playlist items.
+   */
   const getFallbackSongs = (mood) => {
     const m = mood.toLowerCase();
     if (m.includes("happy") || m.includes("very happy")) {
@@ -213,11 +231,12 @@ export default function SongsByMood() {
     }
   };
 
-  // Get active song array
   const activeSongs = Array.isArray(song) && song.length > 0 ? song : getFallbackSongs(moodParam);
   const currentSong = activeSongs[currentSongIndex] || null;
 
-  // Control Functions
+  /**
+   * Toggles the playback state between play and pause.
+   */
   const handlePlayPause = () => {
     if (isPlaying) {
       audioRef.current.pause();
@@ -228,6 +247,10 @@ export default function SongsByMood() {
     }
   };
 
+  /**
+   * Toggles or loads song selection. Pauses/resumes if clicking currently active track.
+   * @param {number} index - The target song index inside active playlist.
+   */
   const handleSelectSong = (index) => {
     if (currentSongIndex === index) {
       if (isPlaying) {
@@ -243,23 +266,26 @@ export default function SongsByMood() {
     }
   };
 
+  /**
+   * Navigates to the next song in the active playlist.
+   */
   const handleNext = () => {
     if (activeSongs.length === 0) return;
     setCurrentSongIndex((prevIndex) => (prevIndex + 1) % activeSongs.length);
   };
 
+  /**
+   * Navigates to the previous song in the active playlist.
+   */
   const handlePrevious = () => {
     if (activeSongs.length === 0) return;
     setCurrentSongIndex((prevIndex) => (prevIndex - 1 + activeSongs.length) % activeSongs.length);
   };
 
-  // Fetch songs on load
   useEffect(() => {
     handlleGetSongs({ mood: moodParam });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moodParam]);
 
-  // Synchronize audio element settings
   useEffect(() => {
     const audio = audioRef.current;
 
@@ -284,10 +310,8 @@ export default function SongsByMood() {
       audio.removeEventListener("durationchange", handleDurationChange);
       audio.removeEventListener("ended", handleAudioEnded);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSongs, currentSongIndex]);
 
-  // Handle setting audio source on song index changes
   useEffect(() => {
     if (currentSong) {
       audioRef.current.src = currentSong.songUrl;
@@ -296,10 +320,8 @@ export default function SongsByMood() {
         audioRef.current.play().catch(e => console.log("Playback failed:", e));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSongIndex]);
 
-  // Stop music on page unmount (when user changes page)
   useEffect(() => {
     const audio = audioRef.current;
     return () => {
@@ -308,14 +330,20 @@ export default function SongsByMood() {
     };
   }, []);
 
-
-
+  /**
+   * Adjusts current audio timeline scrubber position.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Change event.
+   */
   const handleProgressChange = (e) => {
     const val = parseFloat(e.target.value);
     audioRef.current.currentTime = val;
     setCurrentTime(val);
   };
 
+  /**
+   * Adjusts the volume amplitude and muting flags.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Change event.
+   */
   const handleVolumeChange = (e) => {
     const val = parseFloat(e.target.value);
     audioRef.current.volume = val;
@@ -329,6 +357,9 @@ export default function SongsByMood() {
     }
   };
 
+  /**
+   * Toggles the audio muting flag.
+   */
   const handleToggleMute = () => {
     const audio = audioRef.current;
     if (isMuted) {
@@ -341,6 +372,11 @@ export default function SongsByMood() {
     }
   };
 
+  /**
+   * Helper utility to convert duration seconds to user-friendly time string (m:ss).
+   * @param {number} secs - Raw seconds count.
+   * @returns {string} Formatted track duration text.
+   */
   const formatTime = (secs) => {
     if (isNaN(secs)) return "0:00";
     const m = Math.floor(secs / 60);
@@ -350,14 +386,12 @@ export default function SongsByMood() {
 
   return (
     <div className="songs-page">
-      {/* Background Orbs */}
       <div className="songs-page__bg" aria-hidden="true">
         <div className="orb-1" />
         <div className="orb-2" />
         <div className="grid" />
       </div>
 
-      {/* Navigation Header */}
       <header className="detector-header" style={{ position: "relative", zIndex: 20 }}>
         <div className="detector-header__content">
           <div className="detector-header__brand" onClick={() => navigate("/predict")}>
@@ -375,9 +409,7 @@ export default function SongsByMood() {
         </div>
       </header>
 
-      {/* Main Container */}
       <main className="songs-page__content">
-        {/* Banner Section */}
         <section className="mood-banner">
           <div className="mood-banner__info">
             <span className="mood-banner__icon">{getMoodEmoji(detectedMoodTitle)}</span>
@@ -394,7 +426,6 @@ export default function SongsByMood() {
           </button>
         </section>
 
-        {/* Songs List */}
         {loading ? (
           <div style={{ textAlign: "center", padding: "4rem", color: "#9ca3af" }}>
             <h2>Curating your playlist...</h2>
@@ -449,10 +480,8 @@ export default function SongsByMood() {
         )}
       </main>
 
-      {/* Floating Audio Player Bar */}
       {currentSong && (
         <footer className="audio-player-bar">
-          {/* Left Side: Artwork & Metadata */}
           <div className="audio-player-bar__left">
             <img
               src={currentSong.posterUrl}
@@ -465,7 +494,6 @@ export default function SongsByMood() {
             </div>
           </div>
 
-          {/* Middle Side: Playback Controls & Progress Scrubber */}
           <div className="audio-player-bar__middle">
             <div className="audio-player-bar__controls">
               <button
@@ -508,7 +536,6 @@ export default function SongsByMood() {
             </div>
           </div>
 
-          {/* Right Side: Volume Controls */}
           <div className="audio-player-bar__right">
             <button
               type="button"

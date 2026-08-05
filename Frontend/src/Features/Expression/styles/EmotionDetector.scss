@@ -1,4 +1,4 @@
-/* Emotion Detector Dashboard Styles */
+
 
 $color-bg: #09070f;
 $color-card-bg: #13101c;
@@ -20,7 +20,7 @@ $color-green: #10b981;
   overflow: hidden;
 }
 
-/* Background animated orbs */
+
 .detector-bg {
   position: absolute;
   top: 0;
@@ -69,7 +69,7 @@ $color-green: #10b981;
   }
 }
 
-/* Header Navigation */
+
 .detector-header {
   position: relative;
   z-index: 10;
@@ -178,7 +178,7 @@ $color-green: #10b981;
   }
 }
 
-/* Main Layout */
+
 .detector-main {
   position: relative;
   z-index: 10;
@@ -192,7 +192,7 @@ $color-green: #10b981;
   gap: 3rem;
 }
 
-/* Title Section */
+
 .detector-title-section {
   display: flex;
   flex-direction: column;
@@ -220,7 +220,7 @@ $color-green: #10b981;
   }
 }
 
-/* Main Panel Grid */
+
 .detector-grid-layout {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
@@ -231,7 +231,7 @@ $color-green: #10b981;
   }
 }
 
-/* Common Card Style */
+
 .detector-card {
   background: rgba($color-card-bg, 0.45);
   border: 1px solid $color-border;
@@ -249,7 +249,7 @@ $color-green: #10b981;
   }
 }
 
-/* Live Input Panel */
+
 .live-input {
   &__header {
     display: flex;
@@ -303,7 +303,7 @@ $color-green: #10b981;
     }
   }
 
-  /* Camera Viewport */
+  
   &__viewport {
     position: relative;
     aspect-ratio: 16 / 9;
@@ -315,7 +315,7 @@ $color-green: #10b981;
     align-items: center;
     border: 1px solid rgba(255, 255, 255, 0.03);
 
-    /* Purple L-corners */
+    
     .corner {
       position: absolute;
       width: 24px;
@@ -358,7 +358,7 @@ $color-green: #10b981;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transform: scaleX(-1); /* mirror effect */
+    transform: scaleX(-1); 
 
     &--hidden {
       display: none;
@@ -387,7 +387,7 @@ $color-green: #10b981;
     }
   }
 
-  /* Actions Area */
+  
   &__actions {
     display: flex;
     justify-content: space-between;
@@ -519,7 +519,7 @@ $color-green: #10b981;
   }
 }
 
-/* Detection Result Panel */
+
 .detection-result {
   display: flex;
   flex-direction: column;
@@ -577,7 +577,7 @@ $color-green: #10b981;
     line-height: 1.5;
   }
 
-  /* Metrics 2x2 Grid */
+  
   &__metrics {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -628,7 +628,7 @@ $color-green: #10b981;
   }
 }
 
-/* Tips Section */
+
 .detector-tips-section {
   display: flex;
   flex-direction: column;
@@ -697,7 +697,7 @@ $color-green: #10b981;
   }
 }
 
-/* Footer Section */
+
 .detector-footer {
   position: relative;
   z-index: 10;
@@ -781,7 +781,7 @@ $color-green: #10b981;
   }
 }
 
-/* Playlist Styles */
+
 .playlist-section {
   background: rgba($color-card-bg, 0.45);
   border: 1px solid $color-border;
