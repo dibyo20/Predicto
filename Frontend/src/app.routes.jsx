@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import Register from "./Features/Auth/pages/Register.jsx";
