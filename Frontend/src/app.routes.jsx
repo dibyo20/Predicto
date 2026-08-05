@@ -7,6 +7,7 @@ import EmotionDetector from "./Features/Expression/pages/EmotionDetectorPage.jsx
 import Protected from "./Features/Auth/components/Protected.jsx";
 import { SongContextProvider } from "./Features/Song/song.context.jsx";
 import SongsByMood from "./Features/Song/pages/SongsByMood.jsx";
+import PublicOnly from "./Features/Auth/components/PublicOnly.jsx";
 
 const Layout = () => (
   <SongContextProvider>
@@ -20,15 +21,15 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <PublicOnly><Home /></PublicOnly>,
       },
       {
         path: "/register",
-        element: <Register />,
+        element: <PublicOnly><Register /></PublicOnly>,
       },
       {
         path: "/login",
-        element: <Login />,
+        element: <PublicOnly><Login /></PublicOnly>,
       },
       {
         path: "/predict",
