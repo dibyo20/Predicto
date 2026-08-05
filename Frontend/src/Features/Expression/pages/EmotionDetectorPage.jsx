@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { loadFaceLandmarker, startCamera, detect, cleanup } from "../utils/emotion";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "../styles/EmotionDetector.scss";
 import { useAuth } from "../../Auth/hooks/useAuth";
 
@@ -138,25 +138,18 @@ const PauseIcon = (
 
 export default function EmotionDetector() {
   const { handleLogout } = useAuth();
+  const navigate = useNavigate();
   const videoRef = useRef(null);
   const faceLandmarkerRef = useRef(null);
   const animationFrameRef = useRef(null);
   const streamRef = useRef(null);
   const isDetectingRef = useRef(false);
-  const audioRef = useRef(new Audio());
 
   const [emotion, setEmotion] = useState("Waiting for detection");
   const [detectionTime, setDetectionTime] = useState("-- ms");
   const [faceDetected, setFaceDetected] = useState("No");
   const [isDetecting, setIsDetecting] = useState(false);
   const [cameraStatus, setCameraStatus] = useState("Initializing...");
-
-  // Music Player States
-  const [currentSongUrl, setCurrentSongUrl] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [songs, setSongs] = useState([]);
-  const [loadingSongs, setLoadingSongs] = useState(false);
-  const [showMusicSection, setShowMusicSection] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -198,17 +191,9 @@ export default function EmotionDetector() {
 
     setup();
 
-    // Setup audio listeners
-    const audio = audioRef.current;
-    const handleAudioEnded = () => setIsPlaying(false);
-    audio.addEventListener("ended", handleAudioEnded);
-
     return () => {
       active = false;
       cleanup(videoRef, animationFrameRef, streamRef.current);
-      audio.removeEventListener("ended", handleAudioEnded);
-      audio.pause();
-      audio.src = "";
     };
   }, []);
 
@@ -223,60 +208,14 @@ export default function EmotionDetector() {
       setEmotion("Detecting...");
       setDetectionTime("-- ms");
       setFaceDetected("No");
-      setShowMusicSection(false);
-      
-      // Pause playing music if starting fresh scan
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      }
-    }
-  };
-
-  // Music Player Action
-  const handlePlaySong = (songUrl) => {
-    if (currentSongUrl === songUrl) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        audioRef.current.play().catch(e => console.log("Audio play failed:", e));
-        setIsPlaying(true);
-      }
-    } else {
-      audioRef.current.pause();
-      audioRef.current.src = songUrl;
-      setCurrentSongUrl(songUrl);
-      setIsPlaying(true);
-      audioRef.current.play().catch(e => console.log("Audio play failed:", e));
     }
   };
 
   // Trigger Song Playlist Suggestions
-  const handleShowMusic = async () => {
+  const handleShowMusic = () => {
     if (emotion === "Waiting for detection" || isDetecting) return;
-    
-    setShowMusicSection(true);
-    setLoadingSongs(true);
-    
     const moodQuery = getMoodQueryKeyword(title);
-    
-    try {
-      const response = await axios.get(`http://localhost:5000/api/songs?mood=${moodQuery}`, {
-        withCredentials: true
-      });
-      
-      if (response.data && response.data.songs && response.data.songs.length > 0) {
-        setSongs(response.data.songs);
-      } else {
-        setSongs(getMockSongs(moodQuery));
-      }
-    } catch (err) {
-      console.error("Failed to fetch songs from backend, using mock data:", err);
-      setSongs(getMockSongs(moodQuery));
-    } finally {
-      setLoadingSongs(false);
-    }
+    navigate(`/songsbymood?mood=${moodQuery}`, { state: { mood: title } });
   };
 
   const getMoodQueryKeyword = (titleText) => {
@@ -287,67 +226,6 @@ export default function EmotionDetector() {
     if (t.includes("sad")) return "sad";
     if (t.includes("angry")) return "sad";
     return "happy";
-  };
-
-  const getMockSongs = (mood) => {
-    if (mood === "happy" || mood === "very happy") {
-      return [
-        {
-          _id: "mock-1",
-          title: "Sunshine Horizon",
-          artist: "Lofi Beats",
-          songUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-          posterUrl: "https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=100&auto=format&fit=crop&q=60",
-          mood: mood
-        },
-        {
-          _id: "mock-2",
-          title: "Groovy Radiance",
-          artist: "Solar Waves",
-          songUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-          posterUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100&auto=format&fit=crop&q=60",
-          mood: mood
-        }
-      ];
-    } else if (mood === "sad") {
-      return [
-        {
-          _id: "mock-3",
-          title: "Raindrops on Glass",
-          artist: "Chill Ambient",
-          songUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-          posterUrl: "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?w=100&auto=format&fit=crop&q=60",
-          mood: mood
-        },
-        {
-          _id: "mock-4",
-          title: "Faded Reflections",
-          artist: "Echo Trails",
-          songUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-          posterUrl: "https://images.unsplash.com/photo-1445217143695-460129e43241?w=100&auto=format&fit=crop&q=60",
-          mood: mood
-        }
-      ];
-    } else {
-      return [
-        {
-          _id: "mock-5",
-          title: "Spark Particles",
-          artist: "Cinematic Dream",
-          songUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
-          posterUrl: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=100&auto=format&fit=crop&q=60",
-          mood: mood
-        },
-        {
-          _id: "mock-6",
-          title: "Unfolding Realities",
-          artist: "Future Bass",
-          songUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
-          posterUrl: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=100&auto=format&fit=crop&q=60",
-          mood: mood
-        }
-      ];
-    }
   };
 
   // Parsing current emotion string for rendering details
@@ -554,56 +432,7 @@ export default function EmotionDetector() {
           </div>
         </section>
 
-        {/* Suggested Playlist Section */}
-        {showMusicSection && (
-          <section className="playlist-section">
-            <div className="playlist-section__header">
-              <h2 className="playlist-section__title">
-                Suggested Playlist for <span>{title}</span>
-              </h2>
-            </div>
-            {loadingSongs ? (
-              <div style={{ textAlign: "center", padding: "2rem", color: "#9ca3af" }}>
-                <p>Loading playlist...</p>
-              </div>
-            ) : (
-              <div className="playlist-section__list">
-                {songs.map((song) => (
-                  <div
-                    key={song._id}
-                    className={`playlist-section__item ${
-                      currentSongUrl === song.songUrl ? "playlist-section__item--active" : ""
-                    }`}
-                  >
-                    <div className="playlist-section__song-info">
-                      <img
-                        src={song.posterUrl}
-                        alt={song.title}
-                        className="playlist-section__cover"
-                      />
-                      <div className="playlist-section__details">
-                        <span className="playlist-section__song-title">{song.title}</span>
-                        <span className="playlist-section__song-artist">{song.artist || "Unknown Artist"}</span>
-                      </div>
-                    </div>
-                    <div className="playlist-section__controls">
-                      <span className="playlist-section__duration">3:00</span>
-                      <button
-                        type="button"
-                        className={`playlist-section__play-btn ${
-                          currentSongUrl === song.songUrl && isPlaying ? "playlist-section__play-btn--playing" : ""
-                        }`}
-                        onClick={() => handlePlaySong(song.songUrl)}
-                      >
-                        {currentSongUrl === song.songUrl && isPlaying ? PauseIcon : PlayIcon}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
+
 
         {/* Tips Section */}
         <section className="detector-tips-section">
