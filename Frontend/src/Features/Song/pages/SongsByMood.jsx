@@ -299,6 +299,15 @@ export default function SongsByMood() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSongIndex]);
 
+  // Stop music on page unmount (when user changes page)
+  useEffect(() => {
+    const audio = audioRef.current;
+    return () => {
+      audio.pause();
+      audio.src = "";
+    };
+  }, []);
+
 
 
   const handleProgressChange = (e) => {
