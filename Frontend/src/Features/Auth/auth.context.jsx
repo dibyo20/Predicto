@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useCallback,
@@ -20,7 +21,7 @@ export function AuthProvider({ children }) {
       const data = await profile();
       setUser(data.user);
       return data.user;
-    } catch (err) {
+    } catch {
       setUser(null);
       return null;
     } finally {
@@ -29,8 +30,28 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    refreshProfile();
-  }, [refreshProfile]);
+    let isMounted = true;
+    const fetchUser = async () => {
+      try {
+        const data = await profile();
+        if (isMounted) {
+          setUser(data.user);
+        }
+      } catch {
+        if (isMounted) {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+    fetchUser();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const value = useMemo(
     () => ({
