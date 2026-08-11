@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL || "https://predicto.dibyo.tech" || 'http://localhost:5173',
     credentials: true,
 }));
 
@@ -18,5 +18,11 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/songs', uploadRouter);
+
+app.get('/', (req, res) => {
+    res.status(200).json({
+        message: "Welcomre to the Predicto",
+    });
+});
 
 module.exports = app;
