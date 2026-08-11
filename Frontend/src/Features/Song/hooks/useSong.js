@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { getSongs } from "../services/song.api";
 import { SongContext } from "../song.context.jsx";
 
@@ -11,7 +11,7 @@ export const useSong = () => {
 
     const { song, setSong, loading, setLoading } = context;
 
-    async function handlleGetSongs({ mood }) {
+    const handlleGetSongs = useCallback(async ({ mood }) => {
         setLoading(true);
         try {
             const res = await getSongs({ mood });
@@ -21,7 +21,7 @@ export const useSong = () => {
         } finally {
             setLoading(false);
         }
-    }
+    }, [setSong, setLoading]);
 
     return {
         song,

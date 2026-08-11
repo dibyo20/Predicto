@@ -9,15 +9,13 @@ import { SongContextProvider } from "./Features/Song/song.context.jsx";
 import SongsByMood from "./Features/Song/pages/SongsByMood.jsx";
 import PublicOnly from "./Features/Auth/components/PublicOnly.jsx";
 
-const Layout = () => (
-  <SongContextProvider>
-    <Outlet />
-  </SongContextProvider>
-);
-
 export const router = createBrowserRouter([
   {
-    element: <Layout />,
+    element: (
+      <SongContextProvider>
+        <Outlet />
+      </SongContextProvider>
+    ),
     children: [
       {
         path: "/",

@@ -1,4 +1,4 @@
-@import "../../../styles/main.scss";
+@use "../../../styles/main.scss" as *;
 
 /* Register-specific layout refactoring for visual layout space and clarity */
 .auth-page--register {

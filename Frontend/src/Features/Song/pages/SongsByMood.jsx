@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { useSong } from "../hooks/useSong";
 import { useAuth } from "../../Auth/hooks/useAuth";
@@ -269,10 +269,10 @@ export default function SongsByMood() {
   /**
    * Navigates to the next song in the active playlist.
    */
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (activeSongs.length === 0) return;
     setCurrentSongIndex((prevIndex) => (prevIndex + 1) % activeSongs.length);
-  };
+  }, [activeSongs]);
 
   /**
    * Navigates to the previous song in the active playlist.
@@ -284,7 +284,7 @@ export default function SongsByMood() {
 
   useEffect(() => {
     handlleGetSongs({ mood: moodParam });
-  }, [moodParam]);
+  }, [moodParam, handlleGetSongs]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -310,7 +310,7 @@ export default function SongsByMood() {
       audio.removeEventListener("durationchange", handleDurationChange);
       audio.removeEventListener("ended", handleAudioEnded);
     };
-  }, [activeSongs, currentSongIndex]);
+  }, [handleNext]);
 
   useEffect(() => {
     if (currentSong) {
@@ -320,7 +320,8 @@ export default function SongsByMood() {
         audioRef.current.play().catch(e => console.log("Playback failed:", e));
       }
     }
-  }, [currentSongIndex]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSong]);
 
   useEffect(() => {
     const audio = audioRef.current;
