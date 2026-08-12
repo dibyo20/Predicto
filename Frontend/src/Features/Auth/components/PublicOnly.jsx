@@ -1,25 +1,14 @@
 import { useAuth } from "../hooks/useAuth.js";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import { LoginSkeleton, RegisterSkeleton } from "./Skeletons";
 
 const PublicOnly = ({ children }) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
-    return (
-      <div
-        className="loading"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          color: "#fff",
-          fontSize: "2rem",
-        }}
-      >
-        <p>Loading...</p>
-      </div>
-    );
+    const isRegister = location.pathname === "/register";
+    return isRegister ? <RegisterSkeleton /> : <LoginSkeleton />;
   }
 
   if (!loading && user) {

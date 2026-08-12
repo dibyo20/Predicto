@@ -362,3 +362,106 @@ body {
     letter-spacing: 0.025em;
   }
 }
+
+@keyframes skeleton-pulse {
+  0% {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+  100% {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.skeleton-item {
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.06);
+  display: inline-block;
+}
+
+// Custom shapes
+.skeleton-title {
+  height: 2.5rem;
+  width: 60%;
+  margin-bottom: 1rem;
+}
+
+.skeleton-text {
+  height: 1rem;
+  width: 100%;
+  margin-bottom: 0.75rem;
+
+  &--short {
+    width: 40%;
+  }
+
+  &--medium {
+    width: 75%;
+  }
+}
+
+.skeleton-circle {
+  border-radius: 50%;
+}
+
+.skeleton-btn {
+  height: 2.75rem;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.skeleton-input {
+  height: 3rem;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+}
+
+// Layout mimics
+.skeleton-dashboard {
+  min-height: 100vh;
+  background: #09070f;
+  color: #fff;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+
+  .skeleton-header {
+    height: 70px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+  }
+
+  .skeleton-body {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  .skeleton-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 2rem;
+    margin-top: 2.5rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .skeleton-card {
+    background: rgba(19, 16, 28, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
