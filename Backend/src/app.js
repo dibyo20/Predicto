@@ -5,8 +5,15 @@ const uploadRouter = require('./routes/song.routes.js');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    "https://predicto.dibyo.tech",
+    "http://localhost:5173",
+    "http://localhost:5174"
+].filter(Boolean);
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "https://predicto.dibyo.tech" || 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true,
 }));
 
