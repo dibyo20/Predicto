@@ -101,14 +101,31 @@ const Register = () => {
       setError("Username is required.");
       return;
     }
+    const usernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
+    if (!usernameRegex.test(registerCredentials.username)) {
+      setError("Username must be 3-30 characters long and contain only letters, numbers, and underscores.");
+      return;
+    }
+
     if (!registerCredentials.email.trim()) {
       setError("Email address is required.");
       return;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(registerCredentials.email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     if (!registerCredentials.password) {
       setError("Password is required.");
       return;
     }
+    if (registerCredentials.password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
     if (registerCredentials.password !== registerCredentials.confirmPassword) {
       setError("Passwords do not match.");
       return;
