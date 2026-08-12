@@ -150,6 +150,7 @@ export default function EmotionDetector() {
   const [faceDetected, setFaceDetected] = useState("No");
   const [isDetecting, setIsDetecting] = useState(false);
   const [cameraStatus, setCameraStatus] = useState("Initializing...");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -157,6 +158,7 @@ export default function EmotionDetector() {
     const setup = async () => {
       try {
         setCameraStatus("Initializing...");
+        setErrorMessage("");
         const landmarker = await loadFaceLandmarker();
         if (active) {
           faceLandmarkerRef.current = landmarker;
@@ -185,6 +187,17 @@ export default function EmotionDetector() {
         console.error("Camera access/initialization error:", err);
         if (active) {
           setCameraStatus("Camera Off");
+          let msg = err.message || String(err);
+          if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+            msg = "Camera permission denied. Please allow camera access in your browser settings (click the lock/camera icon in the address bar).";
+          } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+            msg = "No webcam detected. Please connect a camera and refresh the page.";
+          } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+            msg = "Webcam is already in use by another application.";
+          } else if (msg.includes("FilesetResolver") || msg.includes("FaceLandmarker") || msg.includes("fetch")) {
+            msg = "Failed to load face landmarker models from CDN. Please check your internet connection.";
+          }
+          setErrorMessage(msg);
         }
       }
     };
@@ -362,7 +375,14 @@ export default function EmotionDetector() {
               {(cameraStatus !== "Camera Ready" || !isDetecting) && (
                 <div className="live-input__placeholder">
                   {FacePlaceholderIcon}
-                  <p>Position your face in the center of the frame.</p>
+                  {cameraStatus === "Camera Off" && errorMessage ? (
+                    <div className="live-input__error" style={{ color: "#ef4444", padding: "1rem", textAlign: "center" }}>
+                      <p style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>Camera Initialization Failed</p>
+                      <p style={{ fontSize: "0.85rem", opacity: 0.9 }}>{errorMessage}</p>
+                    </div>
+                  ) : (
+                    <p>Position your face in the center of the frame.</p>
+                  )}
                 </div>
               )}
             </div>

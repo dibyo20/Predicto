@@ -70,6 +70,8 @@ const VolumeMuteIcon = (
   </svg>
 );
 
+const DEFAULT_CD_IMAGE = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%231a1823' stroke='%23332f4c' stroke-width='1.5'/><circle cx='50' cy='50' r='42' fill='none' stroke='%232b263f' stroke-width='1'/><circle cx='50' cy='50' r='35' fill='none' stroke='%232b263f' stroke-width='0.8'/><circle cx='50' cy='50' r='28' fill='none' stroke='%232b263f' stroke-width='0.8'/><circle cx='50' cy='50' r='20' fill='none' stroke='%232b263f' stroke-width='0.5'/><circle cx='50' cy='50' r='16' fill='url(%23gradient)'/><circle cx='50' cy='50' r='6' fill='%230f0d1a' stroke='%23332f4c' stroke-width='1'/><defs><linearGradient id='gradient' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%238b5cf6'/><stop offset='50%25' stop-color='%23d946ef'/><stop offset='100%25' stop-color='%23ec4899'/></linearGradient></defs></svg>";
+
 export default function SongsByMood() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
@@ -442,11 +444,15 @@ export default function SongsByMood() {
                 onClick={() => handleSelectSong(index)}
               >
                 <div className="songs-grid__cover-wrapper">
-                  <span className="songs-grid__badge">Recommended</span>
                   <img
-                    src={item.posterUrl || "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300"}
+                    src={item.posterUrl || DEFAULT_CD_IMAGE}
                     alt={item.title}
-                    className="songs-grid__cover"
+                    className={`songs-grid__cover ${
+                      currentSongIndex === index && isPlaying ? "songs-grid__cover--playing" : ""
+                    }`}
+                    onError={(e) => {
+                      e.target.src = DEFAULT_CD_IMAGE;
+                    }}
                   />
                   <div className="songs-grid__overlay">
                     <button
@@ -484,11 +490,16 @@ export default function SongsByMood() {
       {currentSong && (
         <footer className="audio-player-bar">
           <div className="audio-player-bar__left">
-            <img
-              src={currentSong.posterUrl}
-              alt={currentSong.title}
-              className="audio-player-bar__cover"
-            />
+            <div className="audio-player-bar__cover-wrapper">
+              <img
+                src={currentSong.posterUrl || DEFAULT_CD_IMAGE}
+                alt={currentSong.title}
+                className={`audio-player-bar__cover ${isPlaying ? "audio-player-bar__cover--playing" : ""}`}
+                onError={(e) => {
+                  e.target.src = DEFAULT_CD_IMAGE;
+                }}
+              />
+            </div>
             <div className="audio-player-bar__details">
               <span className="audio-player-bar__song-title">{currentSong.title}</span>
               <span className="audio-player-bar__song-artist">{currentSong.artist || "Unknown Artist"}</span>
