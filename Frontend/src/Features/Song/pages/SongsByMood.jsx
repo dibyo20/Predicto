@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { useSong } from "../hooks/useSong";
 import { useAuth } from "../../Auth/hooks/useAuth";
