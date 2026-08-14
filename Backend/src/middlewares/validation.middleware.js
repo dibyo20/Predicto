@@ -1,51 +1,51 @@
-const validateRegister = (req, res, next) => {
-    const { username, email, password } = req.body;
+const { body, oneOf, validationResult } = require("express-validator");
 
-    if (!username || typeof username !== "string" || username.trim() === "") {
-        return res.status(400).json({ message: "Username is required." });
+const validateRegister = [
+    body("username")
+        .trim()
+        .notEmpty().withMessage("Username is required.")
+        .bail()
+        .matches(/^[a-zA-Z0-9_]{3,30}$/)
+        .withMessage("Username must be 3-30 characters long and contain only letters, numbers, and underscores."),
+
+    body("email")
+        .trim()
+        .notEmpty().withMessage("Email address is required.")
+        .bail()
+        .isEmail().withMessage("Please provide a valid email address."),
+
+    body("password")
+        .notEmpty().withMessage("Password is required.")
+        .bail()
+        .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long."),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array()[0].msg });
+        }
+        next();
     }
-    
-    const usernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
-    if (!usernameRegex.test(username)) {
-        return res.status(400).json({ 
-            message: "Username must be 3-30 characters long and contain only letters, numbers, and underscores." 
-        });
+];
+
+const validateLogin = [
+    oneOf([
+        body("username").trim().notEmpty(),
+        body("email").trim().notEmpty()
+    ], { message: "Username or Email is required." }),
+
+    body("password")
+        .trim()
+        .notEmpty().withMessage("Password is required."),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array()[0].msg });
+        }
+        next();
     }
-
-    if (!email || typeof email !== "string" || email.trim() === "") {
-        return res.status(400).json({ message: "Email address is required." });
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        return res.status(400).json({ message: "Please provide a valid email address." });
-    }
-
-    if (!password || typeof password !== "string") {
-        return res.status(400).json({ message: "Password is required." });
-    }
-
-    if (password.length < 6) {
-        return res.status(400).json({ message: "Password must be at least 6 characters long." });
-    }
-
-    next();
-};
-
-const validateLogin = (req, res, next) => {
-    const { username, email, password } = req.body;
-
-    const identifier = username || email;
-    if (!identifier || typeof identifier !== "string" || identifier.trim() === "") {
-        return res.status(400).json({ message: "Username or Email is required." });
-    }
-
-    if (!password || typeof password !== "string" || password.trim() === "") {
-        return res.status(400).json({ message: "Password is required." });
-    }
-
-    next();
-};
+];
 
 module.exports = {
     validateRegister,
