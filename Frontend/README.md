@@ -2,7 +2,7 @@
 
 This is the React 19 frontend application for **Predicto**, powered by Vite, React Router v7, and Google MediaPipe tasks. It interfaces with the Predicto backend to capture user facial expressions, classify them, and stream a curated mood-matching soundtrack.
 
-For instructions covering the backend and full-stack integration, refer to the [Root README](file:///c:/Users/asus/Desktop/Predicto/README.md).
+For instructions covering the backend and full-stack integration, refer to the [Root README](file:///c:/Users/asus/Desktop/Projects/Predicto/README.md).
 
 ---
 
@@ -47,6 +47,11 @@ Frontend/src/
 │   │   ├── styles/              # Visual scanner dashboard stylesheet
 │   │   └── utils/               # MediaPipe landmarker loader & getEmotion math
 │   │
+│   ├── Home/
+│   │   ├── pages/               # Home landing page with dashboard entry buttons
+│   │   ├── styles/              # Landing page styles & glassmorphic layout
+│   │   └── domain/              # Landing page domain-specific constants & styles
+│   │
 │   └── Song/
 │       ├── hooks/               # useSong playlist fetcher
 │       ├── pages/               # SongsByMood high-fidelity custom player
@@ -85,7 +90,7 @@ The app will run locally at [http://localhost:5173/](http://localhost:5173/).
 
 ## 🧠 Face Emotion Classification Logic
 
-The emotion utility [emotion.js](file:///c:/Users/asus/Desktop/Predicto/Frontend/src/Features/Expression/utils/emotion.js) tracks the following coefficients computed by MediaPipe:
+The emotion utility [emotion.js](file:///c:/Users/asus/Desktop/Projects/Predicto/Frontend/src/Features/Expression/utils/emotion.js) tracks the following coefficients computed by MediaPipe:
 *   `mouthSmileLeft` & `mouthSmileRight`: Used to measure mouth smile curvature.
 *   `jawOpen`: Determines if user is shouting, laughing, or surprised.
 *   `browDownLeft` & `browDownRight`: Measures frown intensity.

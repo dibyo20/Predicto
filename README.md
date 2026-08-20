@@ -64,6 +64,7 @@ Predicto/
 │   │   ├── services/           # ImageKit storage uploading
 │   │   └── app.js              # Core middleware bindings
 │   ├── server.js               # Backend service entrypoint
+│   ├── Songs.js                # Database song seeding & ImageKit upload script
 │   └── package.json
 │
 └── Frontend/                   # React 19 Client
@@ -71,6 +72,7 @@ Predicto/
     │   ├── Features/           # Core Feature Bundles
     │   │   ├── Auth/           # Auth contexts, hooks, login & register pages
     │   │   ├── Expression/     # MediaPipe models, utils, face scanner page
+    │   │   ├── Home/           # Landing page with interactive animations
     │   │   └── Song/           # Audio players, song hooks & playback logic
     │   ├── styles/             # Global Sass themes, configurations & components
     │   ├── app.routes.jsx      # Navigation route mapping & guards
@@ -87,14 +89,23 @@ Predicto/
 ### Backend Environment Configuration
 Create a `.env` file inside the `Backend/` directory:
 ```env
-PORT=5000
+PORT=5010
+FRONTEND_URL=http://localhost:5173
 MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/predicto
 JWT_SECRET=your_super_secure_jwt_secret
-REDIS_URL=redis://localhost:6379
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password_if_any
 IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
 IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your_endpoint_id
 NODE_ENV=development
+```
+
+### Frontend Environment Configuration
+Create a `.env` file inside the `Frontend/` directory:
+```env
+VITE_API_BASE_URL=http://localhost:5010/api
 ```
 
 ---
@@ -107,9 +118,18 @@ cd Backend
 npm install
 npm run dev
 ```
-The server will start on port `5000` (or the configured `PORT`).
+The server will start on port `5010` (or the configured `PORT`).
 
-### 2. Run the Frontend Client
+### 2. Seed Initial Songs (Optional)
+To batch seed initial soundscapes/songs into the database and upload them to ImageKit, run:
+```bash
+cd Backend
+# Place some .mp3 files inside "Frontend/dist/songs/" directory (create it if missing)
+node Songs.js
+```
+This utility uses the environment parameters inside `Backend/.env` to upload track buffers to your CDN and index them with random emotional states in MongoDB.
+
+### 3. Run the Frontend Client
 ```bash
 cd Frontend
 npm install
@@ -140,5 +160,5 @@ The client will start on port `5173`. Make sure Redis and MongoDB are running to
 ## 🛡️ Route Guards
 
 The client routing is protected via route wrappers:
-*   [Protected](file:///c:/Users/asus/Desktop/Predicto/Frontend/src/Features/Auth/components/Protected.jsx): Ensures users must be logged in. Authenticated profile loading prevents unauthorized pages from flickering.
-*   [PublicOnly](file:///c:/Users/asus/Desktop/Predicto/Frontend/src/Features/Auth/components/PublicOnly.jsx): Restricts authenticated users from reaching guest-only registration, login, and landing screens, sending them straight to `/predict`.
+*   [Protected](file:///c:/Users/asus/Desktop/Projects/Predicto/Frontend/src/Features/Auth/components/Protected.jsx): Ensures users must be logged in. Authenticated profile loading prevents unauthorized pages from flickering.
+*   [PublicOnly](file:///c:/Users/asus/Desktop/Projects/Predicto/Frontend/src/Features/Auth/components/PublicOnly.jsx): Restricts authenticated users from reaching guest-only registration, login, and landing screens, sending them straight to `/predict`.
